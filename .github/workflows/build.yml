@@ -1,0 +1,31 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Build
+
+on:
+  push:
+  workflow_call:
+    inputs:
+      branch:
+        description: "Branch name to use"
+        required: true
+        type: string
+    secrets:
+      ARGON_TOKEN:
+        required: true
+
+jobs:
+  build:
+    runs-on:
+      group: organization/baremetal
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: openpixelsystems/eebus-go
+          fetch-depth: "0"
+          ref: ${{ inputs.branch || github.ref}}
+          token: ${{ secrets.ARGON_TOKEN }}
+
+      - name: Build EEBUS controlbox demo (arm64 go1.21.3)
+        run: GO=go1.21.3 make controlbox-demo-arm64
