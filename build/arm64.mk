@@ -7,12 +7,12 @@
 BIN_ARM64 = bin/arm64
 PREFIX_ARM64 = source $(ENVIRONMENT_ARM64) && CGO_ENABLED=1 GOOS=linux GOARCH=arm64
 
-arm64: controlbox-demo-arm64
+arm64: heatpump-homehub-arm64
 
 ################################################################################
 ### EEBUS Controlbox Demo                                                    ###
 ################################################################################
 
-controlbox-demo-arm64:
-	@$(PREFIX_ARM64) $(GO) build $(ADD_VERSION) -o $(BIN_ARM64)/controlbox-demo openpixelsystems.org/eebus-go/cmd/controlbox/
-	@echo Compiled $(BIN_ARM64)/controlbox with version \'$(COMMIT_ID)\'
+heatpump-homehub-arm64:
+	@$(PREFIX_ARM64) $(GO) build $(ADD_VERSION) -o $(BIN_ARM64)/heatpump-homehub-arm64 openpixelsystems.org/eebus-go/cmd/heatpump/
+	@echo Compiled $(BIN_ARM64)/homehub-heatpump with version \'$(COMMIT_ID)\'
