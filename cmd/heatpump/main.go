@@ -76,7 +76,7 @@ func (h *heatpump) run() {
 		// - Implement homehubTempSensor serial number retrieval
 
 		"DaikinVendorCode", "Daikin", "homehubHeatpump", "homehubHeatpumpSerialNumber",
-		model.DeviceTypeTypeChargingStation,
+		model.DeviceTypeTypeHeatgenerationSystem,
 		[]model.EntityTypeType{model.EntityTypeTypeHeatPumpAppliance},
 		port, certificate, time.Second*4)
 	if err != nil {
