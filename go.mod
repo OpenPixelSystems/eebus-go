@@ -1,16 +1,17 @@
-module github.com/enbility/eebus-go
+module openpixelsystems.org/eebus-go
 
 go 1.21.1
 
 require (
-	github.com/enbility/ship-go v0.5.2
-	github.com/enbility/spine-go v0.6.1
+	github.com/enbility/ship-go v0.5.3
+	github.com/enbility/spine-go v0.6.2
 	github.com/stretchr/testify v1.9.0
 )
 
 require (
 	github.com/ahmetb/go-linq/v3 v3.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/enbility/eebus-go v0.6.2 // indirect
 	github.com/enbility/zeroconf/v2 v2.0.0-20240210101930-d0004078577b // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/golanguzb70/lrucache v1.2.0 // indirect
