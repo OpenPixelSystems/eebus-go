@@ -16,6 +16,7 @@ import (
 	"github.com/enbility/eebus-go/api"
 	"github.com/enbility/eebus-go/service"
 	"github.com/enbility/eebus-go/usecases/cs/lpc"
+	"github.com/enbility/eebus-go/usecases/ma/mpc"
 	shipapi "github.com/enbility/ship-go/api"
 	"github.com/enbility/ship-go/cert"
 	spineapi "github.com/enbility/spine-go/api"
@@ -28,6 +29,7 @@ type heatpump struct {
 	myService *service.Service
 
 	uclpc *lpc.LPC
+	ucmpc *mpc.MPC
 
 	isConnected bool
 }
@@ -97,6 +99,8 @@ func (h *heatpump) run() {
 	localEntity := h.myService.LocalDevice().EntityForType(model.EntityTypeTypeHeatPumpAppliance)
 	h.uclpc = lpc.NewLPC(localEntity, h.OnLPCEvent)
 	h.myService.AddUseCase(h.uclpc)
+	h.ucmpc = mpc.NewMPC(localEntity, h.OnMPCEvent)
+	h.myService.AddUseCase(h.ucmpc)
 
 	if len(remoteSki) == 0 {
 		os.Exit(0)
@@ -157,6 +161,59 @@ func (h *heatpump) OnLPCEvent(ski string, device spineapi.DeviceRemoteInterface,
 	case lpc.DataUpdateLimit:
 		if currentLimit, err := h.uclpc.ConsumptionLimit(); err != nil {
 			fmt.Println("New Limit set to", currentLimit.Value, "W")
+		}
+	}
+}
+
+// MPC Event Handler
+
+func (h *heatpump) OnMPCEvent(ski string, device spineapi.DeviceRemoteInterface, entity spineapi.EntityRemoteInterface, event api.EventType) {
+	if !h.isConnected {
+		return
+	}
+
+	switch event {
+
+	case mpc.DataUpdatePower:
+		// Update momentary active power consumption
+		if Power, err := h.ucmpc.Power(entity); err != nil {
+			fmt.Println("Power:", Power, "W")
+		}
+
+	case mpc.DataUpdatePowerPerPhase:
+		// Update phase specific momentary active power consumption
+		if PowerPerPhase, err := h.ucmpc.PowerPerPhase(entity); err != nil {
+			fmt.Println("PowerPerPhase:", PowerPerPhase, "W")
+		}
+
+	case mpc.DataUpdateEnergyConsumed:
+		// Update total energy consumed
+		if EnergyConsumed, err := h.ucmpc.EnergyConsumed(entity); err != nil {
+			fmt.Println("EnergyConsumed:", EnergyConsumed, "Wh")
+		}
+
+	case mpc.DataUpdateEnergyProduced:
+		// Update total energy produced
+		if EnergyProduced, err := h.ucmpc.EnergyProduced(entity); err != nil {
+			fmt.Println("EnergyProduced:", EnergyProduced, "Wh")
+		}
+
+	case mpc.DataUpdateCurrentsPerPhase:
+		// Update phase specific momentary current consumption
+		if CurrentPerPhase, err := h.ucmpc.CurrentPerPhase(entity); err != nil {
+			fmt.Println("CurrentsPerPhase:", CurrentPerPhase, "A")
+		}
+
+	case mpc.DataUpdateVoltagePerPhase:
+		// Update phase specific voltage
+		if VoltagePerPhase, err := h.ucmpc.VoltagePerPhase(entity); err != nil {
+			fmt.Println("VoltagePerPhase:", VoltagePerPhase, "V")
+		}
+
+	case mpc.DataUpdateFrequency:
+		// Update power network frequency data
+		if Frequency, err := h.ucmpc.Frequency(entity); err != nil {
+			fmt.Println("Frequency:", Frequency, "Hz")
 		}
 	}
 }
